@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Artists{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>artists go here!</h1>
+{% for artist in artists %}
+  <div class="artist_box">
+    <a href="/artists/{{ artist.id }}">
+      <h3>{{ artist.name }}</h3>
+    </a>
+    <h4>Age {{ artist.age }}</h4>
+    <p>{{ artist.bio }}</p>
+  </div>
+{% endfor %}
+{% endblock %}
