@@ -1,6 +1,6 @@
 from flask import request, redirect, url_for, abort, render_template
 from penult import app
-from penult.models import Album, db
+from penult.models import Album, Artist, db
 
 @app.route('/albums')
 @app.route('/')
@@ -19,9 +19,12 @@ def create_album():
   # validate form
   name = request.form["name"]
   year = int(request.form["year"])
+  artist_id = int(request.form["artist_id"])
+  artist = Artist.query.get(artist_id)
+
   # if valid, create album and redirect to that album's page
-  if None not in [name, year]:
-    album = Album(name=name, year=year)
+  if None not in [name, year, artist]:
+    album = Album(name=name, year=year, artist=artist)
     db.session.add(album)
     db.session.commit()
     album_id = album.id

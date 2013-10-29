@@ -1,6 +1,6 @@
 from flask import request, redirect, url_for, abort, render_template
 from penult import app
-from penult.models import Song, db
+from penult.models import Song, Album, db
 
 @app.route('/songs')
 @app.route('/')
@@ -19,9 +19,11 @@ def create_song():
   # validate form
   name = request.form["name"]
   length = int(request.form["length"])
+  album_id = int(request.form["album_id"])
+  album = Album.query.get(album_id)
   # if valid, create song and redirect to that song's page
-  if None not in [name, length]:
-    song = Song(name=name, length=length)
+  if None not in [name, length, album]:
+    song = Song(name=name, length=length, album=album)
     db.session.add(song)
     db.session.commit()
     song_id = song.id
