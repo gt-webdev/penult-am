@@ -1,8 +1,20 @@
 from flask.ext.sqlalchemy import SQLAlchemy
+from flaskext.auth import Auth, login_required, logout
+from flaskext.auth.models.sa import get_user_class
 from penult import app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
+auth = Auth(app, login_url_name='login')
+
+app.secret_key = "lolsekret"
+
+association_table = db.Table('association', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('song_id', db.Integer, db.ForeignKey('song.id')))
+
+User = get_user_class(db.Model)
+User.songs_liked = db.relationship("Song", secondary=association_table)
 
 class Artist(db.Model):
   id = db.Column(db.Integer, primary_key=True)

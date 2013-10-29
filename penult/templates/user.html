@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block title %}{{ user.username }} - User Page{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>{{ user.username }}</h1>
+<h2>Songs Liked</h2>
+<ul>
+{% for song in user.songs_liked %}
+  <li><a href="/songs/{{ song.id }}">{{ song.name }}</a></li>
+{% endfor %}
+</ul>
+<a href="/songs">go back</a>
+{% endblock %}
