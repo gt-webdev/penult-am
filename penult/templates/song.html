@@ -5,6 +5,8 @@
 {% endblock %}
 {% block content %}
 <h1>{{ song.name }}</h1>
+<h2><a href="/albums/{{ song.album.id }}">{{ song.album.name }}</a> by 
+  <a href="/artists/{{ song.album.artist.id }}">{{ song.album.artist.name }}</a></h2>
 <h3>{{ song.length }}</h3>
 <a href="/songs">go back</a>
 {% endblock %}
