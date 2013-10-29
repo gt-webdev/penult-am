@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Songs{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Songs go here!</h1>
+{% for song in songs %}
+  <div class="song_box">
+    <a href="/songs/{{ song.id }}">
+      <h3>{{ song.name }}</h3>
+    </a>
+    <h4>Length(s) {{ song.length }}</h4>
+  </div>
+{% endfor %}
+{% endblock %}

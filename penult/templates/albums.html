@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block title %}Albums{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Albums go here!</h1>
+{% for album in albums %}
+  <div class="album_box">
+    <a href="/albums/{{ album.id }}">
+      <h3>{{ album.name }}</h3>
+    </a>
+    <h4>year {{ album.year }}</h4>
+  </div>
+{% endfor %}
+{% endblock %}

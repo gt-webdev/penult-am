@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}{{ song.name }} - Song Page{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>{{ song.name }}</h1>
+<h3>{{ song.length }}</h3>
+<a href="/songs">go back</a>
+{% endblock %}

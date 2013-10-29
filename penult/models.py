@@ -17,3 +17,29 @@ class Artist(db.Model):
 
   def __repr__(self):
     return '<Artist %r>' %self.name
+
+
+class Album(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(128))
+  year = db.Column(db.Integer)
+
+  def __init__(self, name, year):
+    self.name = name
+    self.year = year
+
+  def __repr__(self):
+    return '<Album %r>' %self.name
+
+class Song(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(128))
+  length = db.Column(db.Integer)
+
+  def __init__(self, name, length):
+    self.name = name
+    self.length = length
+
+  def __repr__(self):
+    return '<Song %r>' %self.name
+

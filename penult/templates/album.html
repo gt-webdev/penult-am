@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block title %}{{ album.name }} - Album Page{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>{{ album.name }}</h1>
+<h3>{{ album.year }}</h3>
+<a href="/albums">go back</a>
+{% endblock %}
