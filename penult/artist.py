@@ -15,7 +15,7 @@ def show_artist(artist_id):
     if artist:
       user = User.query.get(session.get('auth_user')['id'])
       return render_template('artist.html', artist=artist, user=user)
-  return render_template('song.html', song=song, user=None)
+  return render_template('artist.html', artist=artist, user=None)
 
 @app.route('/artists', methods=["POST"])
 def create_artist():

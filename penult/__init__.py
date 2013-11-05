@@ -6,3 +6,4 @@ import penult.album
 import penult.song
 import penult.auth
 import penult.user
+import penult.playlist

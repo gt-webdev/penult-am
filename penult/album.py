@@ -14,8 +14,8 @@ def show_album(album_id):
   if (session.get('auth_user') != None):
     if album:
       user = User.query.get(session.get('auth_user')['id'])
-      return render_template('album.html', album=album, user=user)
-  return render_template('song.html', song=song, user=None)
+      return render_template('album.html', album=album, user=user, playlist=False)
+  return render_template('album.html', album=album, user=None, playlist=False)
 
 @app.route('/albums', methods=["POST"])
 def create_album():

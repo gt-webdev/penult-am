@@ -9,6 +9,8 @@ auth = Auth(app, login_url_name='login')
 
 app.secret_key = "lolsekret"
 
+# association tabels used for many-to-many relationships, e.g. "A user likes 
+# many songs, but a song may be liked by many users"
 association_table_so = db.Table('association', db.Model.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('song_id', db.Integer, db.ForeignKey('song.id')))
@@ -18,11 +20,16 @@ association_table_al = db.Table('association_al', db.Model.metadata,
 association_table_ar = db.Table('association_ar', db.Model.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('artist_id', db.Integer, db.ForeignKey('artist.id')))
+songs_to_playlists = db.Table('songs_to_playlists', db.Model.metadata,
+    db.Column('song_id', db.Integer, db.ForeignKey('song.id')),
+    db.Column('playlist_id', db.Integer, db.ForeignKey('playlist.id')))
+
 
 User = get_user_class(db.Model)
 User.songs_liked = db.relationship("Song", secondary=association_table_so)
 User.albums_liked = db.relationship("Album", secondary=association_table_al)
 User.artists_liked = db.relationship("Artist", secondary=association_table_ar)
+User.playlists = db.relationship("Playlist", backref='creator')
 
 class Artist(db.Model):
   id = db.Column(db.Integer, primary_key=True)
@@ -70,3 +77,15 @@ class Song(db.Model):
   def __repr__(self):
     return '<Song %r>' %self.name
 
+class Playlist(db.Model):
+  id = db.Column(db.Integer, primary_key=True)
+  name = db.Column(db.String(128))
+  creator_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+  songs = db.relationship("Song", secondary=songs_to_playlists)
+
+  def __init__(self, name, creator):
+    self.name = name
+    self.creator_id = creator.id
+
+  def __repr__(self):
+    return '<Playlist %r>' %self.name

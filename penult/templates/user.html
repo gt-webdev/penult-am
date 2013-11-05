@@ -5,6 +5,13 @@
 {% endblock %}
 {% block content %}
 <h1>{{ user.username }}</h1>
+<h2>Playlists</h2>
+<ul>
+{% for playlist in user.playlists %}
+  <li><a href="/playlists/{{ playlist.id }}">{{ playlist.name }}</a></li>
+{% endfor %}
+</ul>
+
 <h2>Artists Liked</h2>
 <ul>
 {% for artist in user.artists_liked %}

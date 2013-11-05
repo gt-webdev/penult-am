@@ -2,6 +2,17 @@
 {% block title %}{{ song.name }} - Song Page{% endblock %}
 {% block head %}
 {{ super() }}
+<script language="JavaScript">
+
+window.onload = function(){ 
+  var playlist_select = document.getElementById("playlist_select");
+  var playlist_form = document.getElementById("playlist_form");
+  playlist_select.onchange = function(e) {
+    playlist_form.setAttribute('action', '/playlists/' + playlist_select.value + '/song');
+  };
+};
+
+</script>
 {% endblock %}
 {% block content %}
 <h1>{{ song.name }}</h1>
@@ -9,6 +20,17 @@
 <form action="/songs/{{ song.id }}/like" method="POST">
   <input class="like_btn" type="submit" value="{{ "un" if song in user.songs_liked }}like" />
 </form>
+  {% if (user.playlists|length) != 0 %}
+  <form action="/playlists/{{user.playlists[0].id}}/song" method="POST" id="playlist_form">
+    <input type="hidden" name="song_id" value="{{ song.id }}" />
+    <select id="playlist_select">
+      {% for playlist in user.playlists %}
+        <option value="{{playlist.id}}">{{playlist.name}}</option>
+      {% endfor %}
+    </select>
+    <input class="add_btn" type="submit" value="Add to Playlist" />
+  </form>
+  {% endif %}
 {% endif %}
 <h2><a href="/albums/{{ song.album.id }}">{{ song.album.name }}</a> by 
   <a href="/artists/{{ song.album.artist.id }}">{{ song.album.artist.name }}</a></h2>

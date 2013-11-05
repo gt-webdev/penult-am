@@ -40,7 +40,7 @@ def register_post():
   return redirect(url_for('login'))
 
 @app.route("/logout")
-def logout():
+def logout_req():
   user_data = logout()
   if user_data is None:
     return abort(400)

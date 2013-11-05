@@ -2,17 +2,44 @@
 {% block title %}{{ album.name }} - Album Page{% endblock %}
 {% block head %}
 {{ super() }}
+<script language="JavaScript">
+
+window.onload = function(){ 
+  var playlist_select = document.getElementById("playlist_select");
+  var playlist_form = document.getElementById("playlist_form");
+  playlist_select.onchange = function(e) {
+    playlist_form.setAttribute('action', '/playlists/' + playlist_select.value + '/album');
+  };
+};
+
+</script>
+
 {% endblock %}
 {% block content %}
 <h1>{{ album.name }}</h1>
-{% if user %}
+{% if user and not playlist %}
 <form action="/albums/{{ album.id }}/like" method="POST">
   <input class="like_btn" type="submit" value="{{ "un" if album in user.albums_liked }}like" />
 </form>
-{% endif %}
+  {% if (user.playlists|length) != 0 %}
+  <form action="/playlists/{{user.playlists[0].id}}/song" method="POST" id="playlist_form">
+    <input type="hidden" name="album_id" value="{{ album.id }}" />
+    <select id="playlist_select">
+      {% for playlist in user.playlists %}
+        <option value="{{playlist.id}}">{{playlist.name}}</option>
+      {% endfor %}
+    </select>
+    <input class="add_btn" type="submit" value="Add to Playlist" />
+  </form>
+  {% endif %}
 
+{% endif %}
+{% if not playlist %}
 <h2><a href="/artists/{{ album.artist.id }}">{{ album.artist.name }}</a></h2>
 <h3>{{ album.year }}</h3>
+{% else %}
+<h2>Created by <a href="/users/{{ album.creator.id }}">{{ album.creator.username }}</a></h2>
+{% endif %}
 <h3>songs</h3>
 <ul>
   {% for song in album.songs %}
