@@ -1,6 +1,6 @@
-from flask import request, redirect, url_for, abort, render_template
+from flask import request, redirect, url_for, abort, render_template, session
 from penult import app
-from penult.models import Artist, db
+from penult.models import Artist, User, db
 
 @app.route('/artists')
 @app.route('/')
@@ -11,8 +11,11 @@ def artists():
 @app.route('/artists/<int:artist_id>')
 def show_artist(artist_id):
   artist = Artist.query.get(artist_id)
-  if artist:
-    return render_template('artist.html', artist=artist)
+  if (session.get('auth_user') != None):
+    if artist:
+      user = User.query.get(session.get('auth_user')['id'])
+      return render_template('artist.html', artist=artist, user=user)
+  return render_template('song.html', song=song, user=None)
 
 @app.route('/artists', methods=["POST"])
 def create_artist():
@@ -51,4 +54,21 @@ def update_artist(artist_id):
 @app.route('/artists/<int:artist_id>', methods=["DELETE"])
 def delete_artist(artist_id):
   Artist.query.filter_by(id = artist_id).delete()
+  db.session.commit()
   return redirect(url_for('artists'), code=303)
+
+@app.route('/artists/<int:artist_id>/like', methods=["POST"])
+def like_artist(artist_id):
+  artist = Artist.query.get(artist_id)
+  if (session.get('auth_user') != None):
+    user = User.query.get(session.get('auth_user')['id'])
+    if (user != None):
+      try:
+        user.artists_liked.remove(artist)
+      except:
+        user.artists_liked.append(artist)
+      db.session.add(user)
+      db.session.add(artist)
+      db.session.commit()
+      return redirect('/artists/%r' % artist_id, code=303)
+  return abort(400)

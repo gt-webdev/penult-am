@@ -9,12 +9,20 @@ auth = Auth(app, login_url_name='login')
 
 app.secret_key = "lolsekret"
 
-association_table = db.Table('association', db.Model.metadata,
+association_table_so = db.Table('association', db.Model.metadata,
     db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
     db.Column('song_id', db.Integer, db.ForeignKey('song.id')))
+association_table_al = db.Table('association_al', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('album_id', db.Integer, db.ForeignKey('album.id')))
+association_table_ar = db.Table('association_ar', db.Model.metadata,
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('artist_id', db.Integer, db.ForeignKey('artist.id')))
 
 User = get_user_class(db.Model)
-User.songs_liked = db.relationship("Song", secondary=association_table)
+User.songs_liked = db.relationship("Song", secondary=association_table_so)
+User.albums_liked = db.relationship("Album", secondary=association_table_al)
+User.artists_liked = db.relationship("Artist", secondary=association_table_ar)
 
 class Artist(db.Model):
   id = db.Column(db.Integer, primary_key=True)

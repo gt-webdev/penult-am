@@ -5,6 +5,11 @@
 {% endblock %}
 {% block content %}
 <h1>{{ artist.name }}</h1>
+{% if user %}
+<form action="/artists/{{ artist.id }}/like" method="POST">
+  <input class="like_btn" type="submit" value="{{ "un" if artist in user.artists_liked }}like" />
+</form>
+{% endif %}
 <h3>{{ artist.age }}</h3>
 <p>{{ artist.bio }}</p>
 <h3>Albums</h3>

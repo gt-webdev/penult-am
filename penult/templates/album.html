@@ -5,13 +5,19 @@
 {% endblock %}
 {% block content %}
 <h1>{{ album.name }}</h1>
+{% if user %}
+<form action="/albums/{{ album.id }}/like" method="POST">
+  <input class="like_btn" type="submit" value="{{ "un" if album in user.albums_liked }}like" />
+</form>
+{% endif %}
+
 <h2><a href="/artists/{{ album.artist.id }}">{{ album.artist.name }}</a></h2>
 <h3>{{ album.year }}</h3>
 <h3>songs</h3>
 <ul>
   {% for song in album.songs %}
   <li><a href="/songs/{{ song.id }}">
-    {{ song.name }} ({{ song.length }})
+    {{ song.name }} ({{ song.length // 60 }}:{{ song.length % 60}})
   </a></li>
   {% endfor %}
 </ul>

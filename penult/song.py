@@ -15,6 +15,7 @@ def show_song(song_id):
     if song:
       user = User.query.get(session.get('auth_user')['id'])
       return render_template('song.html', song=song, user=user)
+  return render_template('song.html', song=song, user=None)
 
 @app.route('/songs', methods=["POST"])
 def create_song():
@@ -51,6 +52,7 @@ def update_song(song_id):
 @app.route('/songs/<int:song_id>', methods=["DELETE"])
 def delete_song(song_id):
   Song.query.filter_by(id = song_id).delete()
+  db.session.commit()
   return redirect(url_for('songs'), code=303)
 
 @app.route('/songs/<int:song_id>/like', methods=["POST"])
@@ -60,12 +62,14 @@ def like_song(song_id):
     user = User.query.get(session.get('auth_user')['id'])
     if (user != None):
       try:
-        user.songs_liked.index(song)
-        return redirect('/songs/%r' % song_id, code=303)
+        # try to unlike song
+        user.songs_liked.remove(song)
       except:
+        # if an error occured when unliking the song, it must not be liked already!
+        # try to like the song
         user.songs_liked.append(song)
-        db.session.add(user)
-        db.session.add(song)
-        db.session.commit()
-        return redirect('/songs/%r' % song_id, code=303)
+      db.session.add(user)
+      db.session.add(song)
+      db.session.commit()
+      return redirect('/songs/%r' % song_id, code=303)
   return abort(400)

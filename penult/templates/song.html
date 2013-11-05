@@ -5,13 +5,13 @@
 {% endblock %}
 {% block content %}
 <h1>{{ song.name }}</h1>
-<h2><a href="/albums/{{ song.album.id }}">{{ song.album.name }}</a> by 
-  <a href="/artists/{{ song.album.artist.id }}">{{ song.album.artist.name }}</a></h2>
-<h3>{{ song.length }}</h3>
 {% if user %}
 <form action="/songs/{{ song.id }}/like" method="POST">
-  <input type="submit" value="Like This Song!" />
+  <input class="like_btn" type="submit" value="{{ "un" if song in user.songs_liked }}like" />
 </form>
 {% endif %}
+<h2><a href="/albums/{{ song.album.id }}">{{ song.album.name }}</a> by 
+  <a href="/artists/{{ song.album.artist.id }}">{{ song.album.artist.name }}</a></h2>
+<h3>{{ song.length // 60 }}:{{ song.length % 60}}</h3>
 <a href="/songs">go back</a>
 {% endblock %}

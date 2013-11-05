@@ -5,11 +5,26 @@
 {% endblock %}
 {% block content %}
 <h1>{{ user.username }}</h1>
+<h2>Artists Liked</h2>
+<ul>
+{% for artist in user.artists_liked %}
+  <li><a href="/artists/{{ artist.id }}">{{ artist.name }}</a></li>
+{% endfor %}
+</ul>
+
+<h2>Albums Liked</h2>
+<ul>
+{% for album in user.albums_liked %}
+  <li><a href="/albums/{{ album.id }}">{{ album.name }}</a></li>
+{% endfor %}
+</ul>
+
 <h2>Songs Liked</h2>
 <ul>
 {% for song in user.songs_liked %}
   <li><a href="/songs/{{ song.id }}">{{ song.name }}</a></li>
 {% endfor %}
+
 </ul>
 <a href="/songs">go back</a>
 {% endblock %}
