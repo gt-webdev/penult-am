@@ -1,6 +1,6 @@
-from flask import request, redirect, url_for, abort, render_template
+from flask import request, redirect, url_for, abort, render_template, session
 from penult import app
-from penult.models import Song, db
+from penult.models import Song, Album, User, db
 
 @app.route('/songs')
 @app.route('/')
@@ -11,17 +11,21 @@ def songs():
 @app.route('/songs/<int:song_id>')
 def show_song(song_id):
   song = Song.query.get(song_id)
-  if song:
-    return render_template('song.html', song=song)
+  if (session.get('auth_user') != None):
+    if song:
+      user = User.query.get(session.get('auth_user')['id'])
+      return render_template('song.html', song=song, user=user)
 
 @app.route('/songs', methods=["POST"])
 def create_song():
   # validate form
   name = request.form["name"]
   length = int(request.form["length"])
+  album_id = int(request.form["album_id"])
+  album = Album.query.get(album_id)
   # if valid, create song and redirect to that song's page
-  if None not in [name, length]:
-    song = Song(name=name, length=length)
+  if None not in [name, length, album]:
+    song = Song(name=name, length=length, album=album)
     db.session.add(song)
     db.session.commit()
     song_id = song.id
@@ -48,3 +52,20 @@ def update_song(song_id):
 def delete_song(song_id):
   Song.query.filter_by(id = song_id).delete()
   return redirect(url_for('songs'), code=303)
+
+@app.route('/songs/<int:song_id>/like', methods=["POST"])
+def like_song(song_id):
+  song = Song.query.get(song_id)
+  if (session.get('auth_user') != None):
+    user = User.query.get(session.get('auth_user')['id'])
+    if (user != None):
+      try:
+        user.songs_liked.index(song)
+        return redirect('/songs/%r' % song_id, code=303)
+      except:
+        user.songs_liked.append(song)
+        db.session.add(user)
+        db.session.add(song)
+        db.session.commit()
+        return redirect('/songs/%r' % song_id, code=303)
+  return abort(400)
