@@ -1,5 +1,5 @@
 from flask import request, redirect, url_for, abort, render_template, session
-from flaskext.auth import login_required
+from flaskext.auth import login_required, permission_required
 from penult import app
 from penult.models import Playlist, Album, Song, User, db
 
@@ -12,8 +12,8 @@ def show_playlist(playlist_id):
       return render_template('album.html', album=playlist, user=user, playlist=True)
     return render_template('album.html', album=playlist, user=None, playlist=True)
 
-@login_required
 @app.route('/playlists', methods=["POST"])
+@permission_required(resource='playlist', action='create')
 def create_playlist():
   name = request.form["name"]
   if (session.get('auth_user') != None):
@@ -29,8 +29,8 @@ def create_playlist():
       return redirect('/playlists/%r' % playlist_id, code=303)
   return abort(500)
 
-@login_required
 @app.route('/playlists/<int:playlist_id>', methods=["DELETE"])
+@permission_required(resource='playlist', action='create')
 def delete_playlist(playlist_id):
   if (session.get('auth_user') != None):
     user = User.query.get(session.get('auth_user')['id'])
@@ -39,8 +39,8 @@ def delete_playlist(playlist_id):
     return redirect(url_for('artists'), code=303)
 
 
-@login_required
 @app.route('/playlists/<int:playlist_id>/<add_type>', methods=["POST"])
+@permission_required(resource='playlist', action='create')
 def add_to_playlist(playlist_id, add_type):
   if add_type == "song":
     song_id = int(request.form['song_id'])

@@ -1,6 +1,7 @@
 from flask import request, redirect, url_for, abort, render_template, session
 from penult import app
 from penult.models import Artist, User, db
+from flaskext.auth import permission_required, has_permission
 
 @app.route('/artists')
 @app.route('/')
@@ -18,6 +19,7 @@ def show_artist(artist_id):
   return render_template('artist.html', artist=artist, user=None)
 
 @app.route('/artists', methods=["POST"])
+@permission_required(resource='artist', action='create')
 def create_artist():
   # validate form
   name = request.form["name"]
@@ -33,6 +35,7 @@ def create_artist():
   return abort(500)
 
 @app.route('/artists/<int:artist_id>', methods=["PUT"])
+@permission_required(resource='artist', action='update')
 def update_artist(artist_id):
   # validate form
   artist = Artist.query.get(artist_id)
@@ -52,12 +55,14 @@ def update_artist(artist_id):
   return redirect('/artists/%r' % artist_id, code=303)
 
 @app.route('/artists/<int:artist_id>', methods=["DELETE"])
+@permission_required(resource='artist', action='delete')
 def delete_artist(artist_id):
   Artist.query.filter_by(id = artist_id).delete()
   db.session.commit()
   return redirect(url_for('artists'), code=303)
 
 @app.route('/artists/<int:artist_id>/like', methods=["POST"])
+@permission_required(resource='artist', action='like')
 def like_artist(artist_id):
   artist = Artist.query.get(artist_id)
   if (session.get('auth_user') != None):

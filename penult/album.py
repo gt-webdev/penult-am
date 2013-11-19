@@ -1,6 +1,7 @@
 from flask import request, redirect, url_for, abort, render_template, session
 from penult import app
 from penult.models import Album, Artist, User, db
+from flaskext.auth import permission_required
 
 @app.route('/albums')
 @app.route('/')
@@ -18,6 +19,7 @@ def show_album(album_id):
   return render_template('album.html', album=album, user=None, playlist=False)
 
 @app.route('/albums', methods=["POST"])
+@permission_required(resource='album', action='create')
 def create_album():
   # validate form
   name = request.form["name"]
@@ -35,6 +37,7 @@ def create_album():
   return abort(500)
 
 @app.route('/albums/<int:album_id>', methods=["PUT"])
+@permission_required(resource='album', action='update')
 def update_album(album_id):
   # validate form
   album = Album.query.get(album_id)
@@ -51,12 +54,14 @@ def update_album(album_id):
   return redirect('/albums/%r' % album_id, code=303)
 
 @app.route('/albums/<int:album_id>', methods=["DELETE"])
+@permission_required(resource='album', action='delet')
 def delete_album(album_id):
   Album.query.filter_by(id = album_id).delete()
   db.session.commit()
   return redirect(url_for('albums'), code=303)
 
 @app.route('/albums/<int:album_id>/like', methods=["POST"])
+@permission_required(resource='album', action='like')
 def like_album(album_id):
   album = Album.query.get(album_id)
   if (session.get('auth_user') != None):

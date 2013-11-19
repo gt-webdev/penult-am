@@ -1,0 +1,68 @@
+{% extends "layout.html" %}
+{% block title %}Admin Panel{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block content %}
+<h1>Admin Panel</h1>
+<h2>Artists</h2>
+<ul>
+{% for artist in artists %}
+<li>
+  <a href="/artists/{{ artist.id }}">{{ artist.id }} - {{ artist.name }}</a>
+  <form action="/artists/{{artist.id}}?_method=DELETE" method="POST">
+    <input type='submit' value='X' />
+  </form>
+</li>
+{% endfor %}
+</ul>
+<h4>Create New</h4>
+<form action="/artists" method="POST">
+  <input type='text' name='name' placeholder='Artist Name' /><br />
+  <input type='text' pattern="(\d)+"  name='age' placeholder='Artist Age' /><br />
+  <textarea name='bio' placeholder='Artist Name'></textarea><br />
+  <input type='submit' value='Create Artist' />
+</form>
+
+<h2>Albums</h2>
+<ul>
+{% for album in albums %}
+<li>
+  <a href="/albums/{{ album.id }}">{{ album.id }} - {{ album.name }}</a>
+  <form action="/albums/{{album.id}}?_method=DELETE" method="POST">
+    <input type='submit' value='X' />
+  </form>
+</li>
+{% endfor %}
+</ul>
+<h4>Create New</h4>
+<form action="/albums" method="POST">
+  <input type='text' name='name' placeholder='Album Name' /><br />
+  <input type='text' pattern="(\d)+"  name='year' placeholder='Release Year' /><br />
+  <input type='text' pattern="(\d)+"  name='artist_id' placeholder='Artist id' /><br />
+  <input type='submit' value='Create Album' />
+</form>
+
+
+<h2>Songs</h2>
+<ul>
+{% for song in songs %}
+  <li>
+    <a href="/songs/{{ song.id }}">{{ song.name }}</a>
+  <form action="/songs/{{song.id}}?_method=DELETE" method="POST">
+    <input type='submit' value='X' />
+  </form>
+  </li>
+{% endfor %}
+</ul>
+
+<h4>Create New</h4>
+<form action="/songs" method="POST">
+  <input type='text' name='name' placeholder='Song Name' /><br />
+  <input type='text' pattern="(\d)+"  name='length' placeholder='length' /><br />
+  <input type='text' pattern="(\d)+"  name='album_id' placeholder='Album id' /><br />
+  <input type='submit' value='Create Song' />
+</form>
+
+<a href="/artists">go back</a>
+{% endblock %}

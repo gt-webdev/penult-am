@@ -1,11 +1,37 @@
 from flask.ext.sqlalchemy import SQLAlchemy
-from flaskext.auth import Auth, login_required, logout
+from flaskext.auth import Auth, login_required, logout, Permission, Role
 from flaskext.auth.models.sa import get_user_class
 from penult import app
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
-auth = Auth(app, login_url_name='login')
+auth = Auth(app)
+
+def create_admin_permissions():
+  perms = []
+  for resource in ['artist', 'album', 'song']:
+    for action in ['create', 'update', 'delete']:
+      perms.append(Permission(resource, action))
+  return perms
+
+def create_user_premsissions():
+  perms = []
+  for action in ['create', 'addto', 'delet']:
+    perms.append(Permission('playlist', action))
+  for resource in ['artist', 'album', 'song']:
+    perms.append(Permission(resource, 'like'))
+  return perms
+
+
+roles = {
+  'admin': Role('admin', create_admin_permissions() + create_user_premsissions()),
+  'user': Role('user', create_user_premsissions())
+}
+
+def load_role(role_name):
+  return roles.get(role_name)
+
+auth.load_role = load_role
 
 app.secret_key = "lolsekret"
 

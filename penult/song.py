@@ -1,6 +1,7 @@
 from flask import request, redirect, url_for, abort, render_template, session
 from penult import app
 from penult.models import Song, Album, User, db
+from flaskext.auth import permission_required
 
 @app.route('/songs')
 @app.route('/')
@@ -18,6 +19,7 @@ def show_song(song_id):
   return render_template('song.html', song=song, user=None)
 
 @app.route('/songs', methods=["POST"])
+@permission_required(resource='song', action='create')
 def create_song():
   # validate form
   name = request.form["name"]
@@ -34,6 +36,7 @@ def create_song():
   return abort(500)
 
 @app.route('/songs/<int:song_id>', methods=["PUT"])
+@permission_required(resource='song', action='update')
 def update_song(song_id):
   # validate form
   song = Song.query.get(song_id)
@@ -50,12 +53,14 @@ def update_song(song_id):
   return redirect('/songs/%r' % song_id, code=303)
 
 @app.route('/songs/<int:song_id>', methods=["DELETE"])
+@permission_required(resource='song', action='delet')
 def delete_song(song_id):
   Song.query.filter_by(id = song_id).delete()
   db.session.commit()
   return redirect(url_for('songs'), code=303)
 
 @app.route('/songs/<int:song_id>/like', methods=["POST"])
+@permission_required(resource='song', action='like')
 def like_song(song_id):
   song = Song.query.get(song_id)
   if (session.get('auth_user') != None):
